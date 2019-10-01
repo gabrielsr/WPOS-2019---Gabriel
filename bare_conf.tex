@@ -323,10 +323,10 @@
 % affiliations
 \author{\IEEEauthorblockN{Gabriel Rodrigues, Genaina Rodrigues}
 \IEEEauthorblockA{
-Departamento de Ciência da Computação \\
- Universidade de Brasília (UnB)\\
-  Campus Universitário Darcy Ribeiro - Asa Norte \\
-  Brasília, DF, Brazil 70910-900 \\
+Departamento de CiÃªncia da ComputaÃ§Ã£o \\
+ Universidade de BrasÃ­lia (UnB)\\
+  Campus UniversitÃ¡rio Darcy Ribeiro - Asa Norte \\
+  BrasÃ­lia, DF, Brazil 70910-900 \\
   Email: gabrielsr@gmail.com, genaina@unb.br}}
 
 % conference papers do not typically use \thanks and this command
@@ -416,7 +416,6 @@ Goalp we introduced the idea of goal-oriented deployment planning.
 Figure~\ref{fig:overview} depics the Goalp stages.
  As a limitation, Goalp is a centralized approach where the deployment can be planned for a single device. Centralized adaptation approaches are known to have limitations. More specifically in a CPS, a centralized approach can have a limited use as a single node can not have all required physical resources, as sensors and actuators are commonly distributed across different devices. 
 
-
 Multi-agent systems (MAS) are systems composed of multiple autonomous components that can autonomously decide on its actions. MAS can be used in distributed environments as an alternative to centralized controlled systems.
 As stated before, centralized adaptation processes are well known to have limitations, such as (a) single point of failures;  (b) scalability issues related to move all the data needed for adaptation decision to the central decision unity. MAS approaches can avoid these problems. Multi-agent reinforcement learning (MARL) are MAS where agents use reinforcement learning in order to create policies for choosing actions.
 
@@ -425,12 +424,14 @@ Holonic systems are inspired by nature. The main idea is that complex systems ca
 
 \section{The Approach}
 
-In order to achieve self-configuration in a sCPS, we extended our previous work Goalp. Here we will present the extension in two parts. In section \ref{handling_dynamicity} we present an overview of how we extended Goalp for a dynamic environment\cite{}. In section \ref{self_organization} we present an overview of our ongoing research on self-oganization at deployment. 
+In order to achieve self-configuration in a CPS, we extended our previous work Goalp. Here we will present the extension in two parts. In section \ref{handling_dynamicity} we present an overview of how we extended Goalp for a dynamic environment\cite{rodrigues_goald:_2019}. In section \ref{self_organization} we present an overview of our ongoing research on self-oganization at deployment. 
 
 \subsection{Handling Dynamicity}
 \label{handling_dynamicity}
 
-In order to achieve self-configuration in a sCPS we firtly extended Goalp to a dynamic environment. GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. GoalD introduced a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes.
+GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. It does so by means of a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes.
+
+
 
 
 \subsection{Self-Organization}
@@ -446,7 +447,6 @@ On top of the resources overlay in the self-oganization overlay. Our self-oganiz
 During spreading stage, the super-node first consults the repository bundles to obtain the initial DVM tree, which does not contain the chosen alternatives. The super-node passes a copy of the DVM to its neighbors. In this copy the node filters alternatives that require resources that are not present in the neighbor subnet. The process of spreading occurs recursively to the leaf nodes. 
 
 During aggregating stage, if a nodes is leaf it respond to their requesting parent with the DVM tree filling in the alternatives that it can deploy. It add to the DVM alternatives that it can fulfil with the quality associated with its resources (the utility function is specified in the alternative bundle). The non-leaf nodes when receiving the answers merge the answered trees with the tree of their own, adding each received alternative to the alternative lists. Upon receiving the response from all child nodes, the node respond to their requesting parent with the DVM resulted from the merge between all received alternatives and their own. The process ends when the super-node receives the responses from all children. The super-node then begins step (iii),  role assignment. In role assignment the super-node checks if the each goal in the dependency tree can be satisfied. If so, the root goal is achievable. If the goal is not achievable the super-node responds to the requiring node with a "non-achievable" response. If the goal is achievable, the super-node walks the dependency. For each branch, if the best alternative is not the current node, a message is send to the the elected node, along with the DVM of its subtree. The elected node is responsible for the sub-goal achievement and do notify dependent nodes. 
-
 
 
 \section{Preliminary Results}
@@ -564,16 +564,33 @@ In summary, CPS can have a great impact in society but in order to ease the deve
 
 
 
-\bibliography{main}
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
 %\begin{thebibliography}{1}
 \small
-\bibliographystyle{abbrv}
 \bibliography{main}
 
+% \end{thebibliography}
 
 % that's all folks
 \end{document}
