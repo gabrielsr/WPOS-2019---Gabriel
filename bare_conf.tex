@@ -1,6 +1,5 @@
 %% bare_conf.tex
 %% V1.4b
-%% 2015/08/26
 %% by Michael Shell
 %% See:
 %% http://www.michaelshell.org/
@@ -61,6 +60,7 @@
 % Some very useful LaTeX packages include:
 % (uncomment the ones you want to load)
 
+\usepackage{graphicx}
 
 % *** MISC UTILITY PACKAGES ***
 %
@@ -111,7 +111,7 @@
 % *** GRAPHICS RELATED PACKAGES ***
 %
 \ifCLASSINFOpdf
-  % \usepackage[pdftex]{graphicx}
+  \usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
   % \graphicspath{{../pdf/}{../jpeg/}}
   % and their extensions so you won't have to specify these with
@@ -405,7 +405,16 @@ paved the way for solutions that can leverage self-adaptive configurations, beha
 
 Goal-oriented Adaptive Systems are SAS that uses a Goal model as a high level reference model to drive the adaptation. This means that in a Goal-oriented adaptive system a model that represents the system Goals is kept at runtime. This model is constantly analysed in order to make adaptation decisions. Close-adaptive systems are the ones that have a fixed set of possible adaptive actions, and no new behaviors and alternatives can be introduced at runtime. On the other hand, open-adaptive systems are the ones that can be extended at runtime by adding new alternatives to the adaptation mechanism.  
 
-In previous work we have proposed Goalp, an approach for automatic goal-oriented deployment planning in heterogeneous environments. In Goalp, software components should be annotated with information about the (a) goals that the component can achieve; (b) the required runtime resources; (c) components requirements in terms of sub-goal or tasks and (d) level of service quality that the component could provide as a function of available resources.  Goalp we introduced the idea of goal-oriented deployment planning. In a later work we proposed GoalD, an autonomous extension of Goalp. GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. GoalD introduced a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes. As a limitation, both works are centralized approaches and the deployment can be planned for a single device. Centralized adaptation approaches are known to have limitations. More specifically in a CPS, a centralized approach can have a limited use as a single node can not have all required physical resources, as sensors and actuators are commonly distributed across different devices. 
+\begin{figure*}[t]
+\includegraphics[width=\textwidth,height=4cm]{images/transformations}
+\caption{Goalp Overview \cite{rodrigues_goald:_2019} }
+\label{fig:overview}
+\end{figure*}
+
+In previous work we have proposed Goalp, an approach for automatic goal-oriented deployment planning in heterogeneous environments. In Goalp, software components should be annotated with information about the (a) goals that the component can achieve; (b) the required runtime resources; (c) components requirements in terms of sub-goal or tasks and (d) level of service quality that the component could provide as a function of available resources.  
+Goalp we introduced the idea of goal-oriented deployment planning. 
+Figure~\ref{fig:overview} depics the Goalp stages.
+ As a limitation, Goalp is a centralized approach where the deployment can be planned for a single device. Centralized adaptation approaches are known to have limitations. More specifically in a CPS, a centralized approach can have a limited use as a single node can not have all required physical resources, as sensors and actuators are commonly distributed across different devices. 
 
 
 Multi-agent systems (MAS) are systems composed of multiple autonomous components that can autonomously decide on its actions. MAS can be used in distributed environments as an alternative to centralized controlled systems.
@@ -415,6 +424,29 @@ Holonic systems are inspired by nature. The main idea is that complex systems ca
 
 
 \section{The Approach}
+
+In order to achieve self-configuration in a sCPS, we extended our previous work Goalp. Here we will present the extension in two parts. In section \ref{handling_dynamicity} we present an overview of how we extended Goalp for a dynamic environment\cite{}. In section \ref{self_organization} we present an overview of our ongoing research on self-oganization at deployment. 
+
+\subsection{Handling Dynamicity}
+\label{handling_dynamicity}
+
+In order to achieve self-configuration in a sCPS we firtly extended Goalp to a dynamic environment. GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. GoalD introduced a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes.
+
+
+\subsection{Self-Organization}
+\label{self_organization}
+
+In order to achieve self-configuration in a sCPS we extended the GoalD approach. The main idea is that each node in the network that has the required resources can deploy certain components and is an alternative. So we extended the concept of alternative to be a tuple: <node, bundle>. We can describe our extension to self-organization in two parts: an overlay to keep track of available resources on the network and a planning protocol. The scheduling protocol uses the algorithm described in the previous section to calculate the quality of local deployment and performs additional operations to calculate the best alternative between local execution or execution on child nodes.
+
+The resources overlay consists of the hierarchical P2P overalay used to propagate information about requested goals and alternatives of achieving these goals according to available resources. We use an extension of Chord based on \ref{alessandro}. In our hierarchical P2P there is a supernode that is elected following an uptime criteria. Each node has a table of neibors nodes and all resources that each neighbor has in itself or in its beighbors.
+
+
+On top of the resources overlay in the self-oganization overlay. Our self-oganization protocol is divided in three stages: (i) spreading: the dissemination of objectives through the network - following a top-down flow in the resources overlay; (ii) aggregating: alternative quality calculation, results gathering and selection of the best alternatives for execution - following a bottom-up flow; and (iii) role assignment: each node is communicated if it was selected to be responsible for a goal - following a top-down flow in the DVM tree. 
+
+During spreading stage, the super-node first consults the repository bundles to obtain the initial DVM tree, which does not contain the chosen alternatives. The super-node passes a copy of the DVM to its neighbors. In this copy the node filters alternatives that require resources that are not present in the neighbor subnet. The process of spreading occurs recursively to the leaf nodes. 
+
+During aggregating stage, if a nodes is leaf it respond to their requesting parent with the DVM tree filling in the alternatives that it can deploy. It add to the DVM alternatives that it can fulfil with the quality associated with its resources (the utility function is specified in the alternative bundle). The non-leaf nodes when receiving the answers merge the answered trees with the tree of their own, adding each received alternative to the alternative lists. Upon receiving the response from all child nodes, the node respond to their requesting parent with the DVM resulted from the merge between all received alternatives and their own. The process ends when the super-node receives the responses from all children. The super-node then begins step (iii),  role assignment. In role assignment the super-node checks if the each goal in the dependency tree can be satisfied. If so, the root goal is achievable. If the goal is not achievable the super-node responds to the requiring node with a "non-achievable" response. If the goal is achievable, the super-node walks the dependency. For each branch, if the best alternative is not the current node, a message is send to the the elected node, along with the DVM of its subtree. The elected node is responsible for the sub-goal achievement and do notify dependent nodes. 
+
 
 
 \section{Preliminary Results}
@@ -440,13 +472,17 @@ In summary, CPS can have a great impact in society but in order to ease the deve
 %
 %\begin{figure}[!t]
 %\centering
-%\includegraphics[width=2.5in]{myfigure}
+%\includegraphics[width=2.5in]{transformations}
 % where an .eps filename suffix will be assumed under latex, 
 % and a .pdf suffix will be assumed for pdflatex; or what has been declared
 % via \DeclareGraphicsExtensions.
 %\caption{Simulation results for the network.}
 %\label{fig_sim}
 %\end{figure}
+
+
+
+
 
 % Note that the IEEE typically puts floats only at the top, even when this
 % results in a large percentage of a column being occupied by floats.
@@ -520,61 +556,27 @@ In summary, CPS can have a great impact in society but in order to ease the deve
 % \fnbelowfloat command of the stfloats package.
 
 
-
-
-\section{Conclusion}
-The conclusion goes here.
-
-
-
-
 % conference papers do not normally have an appendix
 
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
+%\section*{Acknowledgment}
 
 
 
-
-
-
-
-
-% trigger a \newpage just before the given reference
-% number - used to balance the columns on the last page
-% adjust value as needed - may need to be readjusted if
-% the document is modified later
-%\IEEEtriggeratref{8}
-% The "triggered" command can be changed if desired:
-%\IEEEtriggercmd{\enlargethispage{-5in}}
-
-% references section
-
-% can use a bibliography generated by BibTeX as a .bbl file
-% BibTeX documentation can be easily obtained at:
-% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
-% The IEEEtran BibTeX style support page is at:
-% http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
-% argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
+\bibliography{main}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
-
-
+%\begin{thebibliography}{1}
+\small
+\bibliographystyle{abbrv}
+\bibliography{main}
 
 
 % that's all folks
 \end{document}
+
 
 
