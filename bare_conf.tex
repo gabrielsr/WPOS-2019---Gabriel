@@ -315,7 +315,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Self-organization of Cyber-physical systems using a Goal-Oriented approach}
+\title{GoalD: A Goal-Driven Deployment Framework for Dynamic and Heterogeneous Computing Environments}
 
 
 % author names and affiliations
@@ -407,7 +407,7 @@ Goal-oriented Adaptive Systems are SAS that uses a Goal model as a high level re
 
 \begin{figure*}[t]
 \includegraphics[width=\textwidth,height=4cm]{images/transformations}
-\caption{Goalp Overview \cite{rodrigues_goald:_2019} }
+\caption{Goalp Overview \cite{rodrigues_autonomic_2016} }
 \label{fig:overview}
 \end{figure*}
 
@@ -429,7 +429,57 @@ In order to achieve self-configuration in a CPS, we extended our previous work G
 \subsection{Handling Dynamicity}
 \label{handling_dynamicity}
 
-GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. It does so by means of a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes.
+GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. It does so by means of a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes. GoalD, a \textbf{Goal}-based \textbf{D}eployment approach for software intended to be used in a highly heterogeneous and dynamic computing environment. We develop an automated reasoning which can be executed at runtime and requires minimal human intervention and scales for large models. We evaluate GoalD empirically and demonstrate usefulness and scalability.
+
+The main objective of GoalD is to provide an adaptable deployment framework to harness the decision making complexity to provide a higher levels of quality to the users, even in the face of contextual variations and unavailability of resources.
+
+During the online phase, the focus is the autonomous deployment and adaptation of the packaged bundles in response to context changes. In this stage, GoalD (1) monitors the currently active contexts, (2) takes such context set alongside the currently available computing devices into account to pinpoint applicable alternatives, (3) estimates the delivered QoS of each alternative, (4) picks the one expected to deliver the highest QoS levels and list the bundles needed by it, (5) deploys those bundles onto the computing devices available, and (6) restart the cycle by monitoring contextual changes. This new monitoring phase enables GoalD to identify and respond to newly available contexts by adapting the current deployment. This adaptation may either reactively handle a bundle that is not applicable anymore or proactively increase the provided QoS levels by choosing alternatives that became applicable, without disrupting the system's proper execution.
+
+
+The starting point for the deployment process is the explicit definition of the root goals the stakeholders want to achieve/deploy and the target computing environment via a deployment request. From this set of goals and their CGM sub-trees, GoalD creates a DVM (Deployment Variability Model) relating its goals, contexts, available bundles, and provided qualities. A DVM is a tree-like structure composed of Variability Elements (VE) that describe the alternative implementation options for each goal, ordering them by the expected delivered quality level. DVM follows the principles of a model at runtime \cite{blair_models_2009}. Through the analysis of the alternatives at each node of the DVM tree, GoalD is able to reason about the deployment and choose, for the current context, the alternatives set providing the best QoS and devise a deployment plan to enact it. Such deployment plan consists of a set of deployable bundles that allow for the achievement of all selected root goals on the available computing environment upon deployment and execution. The deployment itself is executed by fetching the selected bundles from the repositories and binding them to the available resources. At runtime, GoalD stores the DVM in order to respond to eventual context changes through re-planning the deployed components and adapt the deployment accordingly.
+
+After executing the deployment according to the goal model, the managed system is considered \emph{available}, which means that it is able to fulfill its defined goals as long as the required resources are available. In an event of a context change, the availability of the system could be threatened if the required resources render unavailable.
+
+In case a resource becomes unavailable, GoalD can recover from the system availability by adapting the deployment if there is an applicable alternative. Then, the system will be unavailable until an adaptation occurs by deploying bundles of the applicable alternatives. As such, the unavailability time encompasses the time to identify the context change, analyse it, come up with an adaptation plan, and execute that plan.
+
+However, in an event of a change that allows for an increase of the provided QoS, there is no unavailable period as the system continues to operate with the current deployment setup while the adaptation cycle is executed simultaneously.
+
+
+\subsubsection{GoalD Manager and Runtime Framework}
+\label{sec:runtime_overview}
+
+Figure~\ref{fig:mapek} illustrates the perspective of the self-adaptation control loop of our GoalD Manager, realized through a MAPE-K feedback loop~\cite{white_architectural_2004}. A MAPE-K loop consists of five elements, the Monitor, Analyze, Plan, Execute, and Knowledge Base. The \emph{Knowledge Base} stores all necessary information (also those produced by the MAPE elements). For example, it keeps a model of the system goals (the DVM), the system's current deployment, and also a data structure to correlate each context to the VEs that depend on it (Context-VE Mapping).
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{./images/goald_mape_k_high_level}
+  \caption{MAPE-K Perspective of GoalD}
+\label{fig:mapek}
+\end{figure}
+ % We present GoalD's deployment metamodel in the following section (Section~\ref{sec:metamodel}) as the underlying structure that defines major conceptual elements of GoalD's autonomous deployment.
+
+The \emph{Monitor} subsystem is responsible for identifying the system's current operating context and notify the Analyze subsystem whenever a \emph{context change} occurs.The \emph{Analyze} subsystem updates the DVM identifying parts rendered inapplicable under the new context and/or evaluate newly available alternatives for the possibility of delivering higher quality levels than those currently being delivered. The \emph{Plan} subsystem is then triggered to (1) parse the updated DVM; (2) envision a new system deployment applicable under the changed environment context and; (3) engineer a deployment plan for adapting the previous deployment into the new one. Finally, the \emph{Execute} subsystem performs the adaptation through the removal of components that have become unnecessary and the installation of the newly required ones.
+
+Whenever the \emph{Monitor} subsystem identifies a context change, the \emph{Analyze} subsystem is immediately triggered to evaluate the need of locally adapting the model. Adapting locally decreases the analyzing cost and, consequently, the recovery time. However, should a context change incur no effect on the deployment, the \emph{Analyze} subsystem will proactively act by attempting to identify newly viable alternatives to adapt into a deployment setup to deliver a higher QoS than the current deployment. If such an opportunity is found, the \emph{Plan} subsystem will update the DVM and ultimately construct a \emph{deployment plan}. This plan is forwarded to the \emph{Execute} subsystem for deployment.
+Upon receipt of a deployment plan, the \emph{Execute} subsystem will carry out the planned deployment operations. These operations involve the \emph{fetching} of the bundles in the deployment plan from the repository, the subsequent \emph{install} or \emph{uninstall} of bundles and the wiring of software components. The \emph{Execute} subsystem is also responsible for updating the \emph{Knowledge Base} with the current deployment state.
+
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/dvm_deployment_variability_model}
+  \caption{DVM: Deployment Variability Model}
+\label{fig:dvm}
+\end{figure}
+
+
+
+
+An important constituent part of the runtime metamodel of GoalD is the \emph{KnowledgeBase}. The \emph{KnowledgeBase} gathers the runtime models for a given computing environment. It stores the DVM, represented by the \emph{rootVE}, the DVM's root node and a Context to VE mapping (\emph{ContextVEMap}). This map is used to pinpoint the goals affected by a given context change. It enables GoalD to efficiently evaluate a change and optimize the adaptation process. A \emph{VE} reifies a goal and contains a \emph{Bundle} that \verb|defines| such goal and a set of \emph{alternatives}. In particular, \emph{rootVE} represents the most important, significative and abstract goal to be achieved by the system.
+
+Figure~\ref{fig:overview} illustrates the DVM sub-tree rooted at goal \texttt{G6}. This Figure depicts the VEs for goals \texttt{G6}, \texttt{G9} and \texttt{G10} as well as tasks \texttt{P7} and \texttt{P8}. At each VE there is a set of possible component alternatives (\texttt{CG9}, \texttt{CP10}, \ldots). \texttt{G6} has only one alternative given that it is an AND-decomposition that necessarily needs both \texttt{G9} and \texttt{G10}. A similar logic applies to \texttt{G9}. On the other hand, since \texttt{G10} has two means-end alternatives, it is left free to choose component \texttt{CP9} and/or \texttt{CP10}.
+
+
+% \todo[inline]{Two contributiuons: not deploy a system if the required SLA can not be achieved. 
+% If more then one alternative is available, choose the best alternative}
 
 
 
@@ -437,7 +487,10 @@ GoalD extended Goalp to efficiently adapt the deployment in response to changes 
 \subsection{Self-Organization}
 \label{self_organization}
 
-In order to achieve self-configuration in a sCPS we extended the GoalD approach. The main idea is that each node in the network that has the required resources can deploy certain components and is an alternative. So we extended the concept of alternative to be a tuple: <node, bundle>. We can describe our extension to self-organization in two parts: an overlay to keep track of available resources on the network and a planning protocol. The scheduling protocol uses the algorithm described in the previous section to calculate the quality of local deployment and performs additional operations to calculate the best alternative between local execution or execution on child nodes.
+In order to achieve self-configuration in a sCPS we extended the GoalD approach. The main idea is that each node in the network that has the required resources can deploy certain components and is an alternative. While in previous version of GoalD and alternative was associated with a single bundle, in this extension the alternative is associated with a tuple: (node, bundle). 
+
+
+We can describe our extension to self-organization in two parts: an overlay to keep track of available resources on the network and a planning protocol. The scheduling protocol uses the algorithm described in the previous section to calculate the quality of local deployment and performs additional operations to calculate the best alternative between local execution or execution on child nodes.
 
 The resources overlay consists of the hierarchical P2P overalay used to propagate information about requested goals and alternatives of achieving these goals according to available resources. We use an extension of Chord based on \ref{alessandro}. In our hierarchical P2P there is a supernode that is elected following an uptime criteria. Each node has a table of neibors nodes and all resources that each neighbor has in itself or in its beighbors.
 
