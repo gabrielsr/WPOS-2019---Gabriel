@@ -405,8 +405,7 @@ paved the way for solutions that can leverage self-adaptive configurations, beha
 
 Goal-oriented Adaptive Systems are SAS that uses a Goal model as a high level reference model to drive the adaptation. This means that in a Goal-oriented adaptive system a model that represents the system Goals is kept at runtime. This model is constantly analysed in order to make adaptation decisions. Close-adaptive systems are the ones that have a fixed set of possible adaptive actions, and no new behaviors and alternatives can be introduced at runtime. On the other hand, open-adaptive systems are the ones that can be extended at runtime by adding new alternatives to the adaptation mechanism.  
 
-In previous work we have proposed Goalp, an approach for automatic goal-oriented deployment planning in heterogeneous environments. In Goalp, software components should be annotated with information about the (a) goals that the component can achieve; (b) the required runtime resources; (c) components requirements in terms of sub-goal or tasks and (d) level of service quality that the component could provide as a function of available resources.  Goalp we introduced the idea of goal-oriented deployment planning. In a later work we proposed GoalD, an autonomous extension of Goalp. GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. GoalD introduced a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes. As a limitation, both works are centralized approaches and the deployment can be planned for a single device. Centralized adaptation approaches are known to have limitations. More specifically in a CPS, a centralized approach can have a limited use as a single node can not have all required physical resources, as sensors and actuators are commonly distributed across different devices. 
-
+In previous work we have proposed Goalp, an approach for automatic goal-oriented deployment planning in heterogeneous environments. In Goalp, software components should be annotated with information about the (a) goals that the component can achieve; (b) the required runtime resources; (c) components requirements in terms of sub-goal or tasks and (d) level of service quality that the component could provide as a function of available resources.  Goalp we introduced the idea of goal-oriented deployment planning. 
 
 Multi-agent systems (MAS) are systems composed of multiple autonomous components that can autonomously decide on its actions. MAS can be used in distributed environments as an alternative to centralized controlled systems.
 As stated before, centralized adaptation processes are well known to have limitations, such as (a) single point of failures;  (b) scalability issues related to move all the data needed for adaptation decision to the central decision unity. MAS approaches can avoid these problems. Multi-agent reinforcement learning (MARL) are MAS where agents use reinforcement learning in order to create policies for choosing actions.
@@ -415,6 +414,10 @@ Holonic systems are inspired by nature. The main idea is that complex systems ca
 
 
 \section{The Approach}
+
+We proposed GoalD, an autonomous extension of Goalp. GoalD extended Goalp to efficiently adapt the deployment in response to changes in the environment. GoalD introduced a runtime model that keeps the system goals, alternatives to achieve that goals and algorithms to device adaptation plans in response to changes. As a limitation, both works are centralized approaches and the deployment can be planned for a single device. Centralized adaptation approaches are known to have limitations. More specifically in a CPS, a centralized approach can have a limited use as a single node can not have all required physical resources, as sensors and actuators are commonly distributed across different devices. 
+
+
 
 
 \section{Preliminary Results}
@@ -559,20 +562,17 @@ The conclusion goes here.
 %\bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
 %\bibliography{IEEEabrv,../bib/paper}
+\bibliography{IEEEabrv,main}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+%\begin{thebibliography}{1}
+\small
+\bibliographystyle{abbrv}
+\bibliography{main}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
-
-
-
+% \end{thebibliography}
 
 % that's all folks
 \end{document}
